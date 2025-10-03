@@ -69,7 +69,7 @@ def update_post(id: int, update_data: dict):
            return True
     return False
 
-def delete_post(id:int):
+def delete_post(id: int):
     for post in posts:
         if post.id == id:
             posts.remove(post)

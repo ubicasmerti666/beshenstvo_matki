@@ -51,4 +51,9 @@ def createPost(authorId: int, Title: str, Content: str):
 def updatePost(id: int, data: dict):
     crud.update_post(id, data)
 
-@app.delete("/posts")
+@app.delete("/posts/{id}")
+def delPost(id: int):
+    if crud.delete_post(id):
+        return "пост уничтожен"
+    else:
+        return "друг не найден"
