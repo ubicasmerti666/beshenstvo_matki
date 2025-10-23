@@ -23,3 +23,8 @@ indent-style = "space"
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "mypy (>=1.18.2,<2.0.0)"
+]
