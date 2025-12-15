@@ -39,6 +39,19 @@ async def read_post(post_id: int, db: Session = Depends(get_db)):
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
     
+    likes_count = await get_post_likes_count(db, post_id)
+    
+    return {
+        "id": post.id,
+        "title": post.title,
+        "content": post.content,
+        "author_id": post.author_id,
+        "author": post.author.login,  # <- ключевое
+        "created_at": post.created_at,
+        "updated_at": post.updated_at,
+        "likes_count": likes_count
+    }
+    
     # Добавляем количество лайков
     likes_count = await get_post_likes_count(db, post_id)
     post_dict = post.__dict__.copy()
