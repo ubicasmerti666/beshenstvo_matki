@@ -20,7 +20,7 @@ async def read_users(
 ):
     return await get_users(db, skip=skip, limit=limit, search=search)
 
-@router.get("/{user_id}", response_model=User)
+@router.get("/users/{user_id}", response_model=User)
 async def read_user(
     user_id: int,
     db: Session = Depends(get_db),
@@ -31,7 +31,7 @@ async def read_user(
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-@router.put("/{user_id}", response_model=User)
+@router.put("/users/{user_id}", response_model=User)
 async def update_current_user(
     user_id: int,
     user_update: dict,
