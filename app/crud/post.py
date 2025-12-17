@@ -59,10 +59,15 @@ async def update_post(db: Session, post_id: int, post_update: PostUpdate, curren
     db.refresh(post)
     return post
 
-async def delete_post(db: Session, post_id: int, current_user: User):
-    post = db.query(Post).filter(Post.id == post_id).first()
-    if not post or post.author_id != current_user.id:
-        raise Exception("No permission to delete this post")
+async def delete_post(db: Session, post_id: int, user_id: int) -> bool:  # ← int, не объект!
+    post = db.query(Post).filter(
+        Post.id == post_id,
+        Post.author_id == user_id  # ← используем user_id
+    ).first()
+    
+    if not post or post.author_id != user_id:  # ← используем user_id
+        return False
+    
     
     db.delete(post)
     db.commit()

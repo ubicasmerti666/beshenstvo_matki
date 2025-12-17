@@ -6,6 +6,8 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { HomePage } from './pages/HomePage';
 import { CreatePostPage } from './pages/CreatePostPage';
+import { PostPage } from './pages/PostPage';
+import { EditPostPage } from './pages/EditPostPage';
 
 function App() {
   return (
@@ -32,6 +34,22 @@ function App() {
               element={
                 <PrivateRoute>
                   <CreatePostPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/posts/:id"
+              element={
+                <PrivateRoute>
+                  <PostPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/posts/:id/edit"
+              element={
+                <PrivateRoute>
+                  <EditPostPage />
                 </PrivateRoute>
               }
             />

@@ -3,11 +3,12 @@ import type { Post, CreatePostData, UpdatePostData, PaginatedResponse } from '..
 
 export const postService = {
   // Получить все посты с пагинацией
-  async getPosts(page: number = 1, size: number = 10): Promise<PaginatedResponse<Post>> {
-    const response = await api.get<PaginatedResponse<Post>>('/posts', {
+  async getPosts(page: number = 1, size: number = 10): Promise<Post[]> { // ✅ Возвращаем Post[]
+    const response = await api.get('/posts', {
       params: { page, size },
     });
-    return response.data;
+    // Твой бэкенд возвращает просто массив
+    return Array.isArray(response.data) ? response.data : [];
   },
 
   // Получить пост по ID

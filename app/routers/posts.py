@@ -75,7 +75,7 @@ async def create_new_post(
         "author": current_user.login
     }
 
-@router.put("/{post_id}", response_model=Post)
+@router.patch("/{post_id}", response_model=Post)
 async def update_existing_post(
     post_id: int,
     post_update: PostUpdate,
@@ -86,3 +86,14 @@ async def update_existing_post(
     if not updated_post:
         raise HTTPException(status_code=404, detail="Post not found")
     return updated_post
+
+@router.delete("/{post_id}")
+async def delete_post_endpoint(
+    post_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_active_user)  # ЗАЩИЩЕН
+):
+    success = await delete_post(db, post_id, current_user.id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Post not found or no permission")
+    return {"message": "Post deleted successfully"}

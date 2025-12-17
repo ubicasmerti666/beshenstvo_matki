@@ -14,20 +14,26 @@ export const PostList = () => {
     setIsLoading(true);
     try {
       const response = await postService.getPosts(pageNum, 10);
-      setPosts(response.items);
-      setTotalPages(response.pages);
+      
+      // ✅ Фикс для твоего бэкенда — просто массив
+      const postsData = Array.isArray(response) ? response : (response.items || []);
+      setPosts(postsData);
+      setTotalPages(1); // Пока без пагинации
     } catch (error: any) {
       toast.error('Ошибка загрузки постов');
       console.error('Load posts error:', error);
+      setPosts([]);
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   useEffect(() => {
     loadPosts(page);
   }, [page]);
 
+  // ✅ БЕЗОПАСНАЯ проверка
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -36,7 +42,7 @@ export const PostList = () => {
     );
   }
 
-  if (posts.length === 0) {
+  if (!posts || posts.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500 text-lg mb-4">
@@ -51,7 +57,7 @@ export const PostList = () => {
 
   return (
     <div className="space-y-6">
-      {/* Список постов */}
+      {/* ✅ БЕЗОПАСНЫЙ map */}
       {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
@@ -66,11 +72,9 @@ export const PostList = () => {
           >
             ← Назад
           </button>
-
           <span className="px-4 py-2 text-gray-600">
             Страница {page} из {totalPages}
           </span>
-
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}

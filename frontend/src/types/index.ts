@@ -41,6 +41,7 @@ export interface User {
     title: string;
     content: string;
     author_id: number;
+    author: string;
     created_at: string;
     updated_at: string;
     likes_count?: number;
