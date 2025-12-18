@@ -6,21 +6,21 @@ Backend
 # 2. Создаем виртуальное окружение
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate  # Windows
+venv\Scripts\activate  # Windows
 
 # 3. Устанавливаем зависимости
 pip install -r requirements.txt
 
 # 4. Копируем .env
 cp .env.example .env
-# Редактируем DATABASE_URL если нужно
+Редактируем DATABASE_URL если нужно
 
 # 5. Запускаем PostgreSQL (docker или локально)
 docker-compose up -d db
 
 # 6. Создаем миграции
 alembic init alembic
-# Редактируем alembic.ini: sqlalchemy.url = ваш DATABASE_URL
+Редактируем alembic.ini: sqlalchemy.url = ваш DATABASE_URL
 alembic revision --autogenerate -m "Initial migration"
 alembic upgrade head
 
