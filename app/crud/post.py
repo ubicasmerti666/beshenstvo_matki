@@ -42,13 +42,12 @@ async def get_posts(
     
     return query.offset(skip).limit(limit).all()
 
-async def update_post(db: Session, post_id: int, post_update: PostUpdate, current_user: User):
+async def update_post(db: Session, post_id: int, post_update: PostUpdate, current_user_id: int):
     post = db.query(Post).filter(Post.id == post_id).first()
     if not post:
         return None
     
-    # Проверка прав доступа
-    if post.author_id != current_user.id:
+    if post.author_id != current_user_id:
         raise Exception("No permission to update this post")
     
     update_data = post_update.dict(exclude_unset=True)

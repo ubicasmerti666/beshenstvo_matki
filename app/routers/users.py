@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional
+import datetime
 from app.core.database import get_db
 from app.dependencies import get_current_active_user
 from app.crud.user import get_users, get_user_by_id, update_user, delete_user
@@ -31,14 +32,30 @@ async def read_user(
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-@router.put("/users/{user_id}", response_model=User)
+@router.patch("/users/{user_id}", response_model=User)
 async def update_current_user(
     user_id: int,
     user_update: dict,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_active_user)  # ЗАЩИЩЕН
 ):
-    updated_user = await update_user(db, user_id, user_update, current_user)
-    if not updated_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return updated_user
+    user = db.query(UserModel).filter(UserModel.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    
+    # Проверяем права (только себя можно редактировать)
+    if user.id != current_user.id:
+        raise HTTPException(status_code=403, detail="Нет прав на редактирование")
+    
+    # ✅ ПРАВИЛЬНО - user_update уже dict
+    update_data = user_update
+        
+    # Обновляем только переданные поля
+    for field, value in update_data.items():
+        if hasattr(user, field) and value is not None:
+            setattr(user, field, value)
+    
+    user.updated_at = datetime.datetime.utcnow()
+    db.commit()
+    db.refresh(user)
+    return user

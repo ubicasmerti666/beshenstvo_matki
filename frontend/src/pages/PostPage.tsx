@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { postService } from '../services/postService';
 import { useAuth } from '../context/AuthContext';
+import { PostActions } from '../components/Posts/PostActions';
+import { CommentList } from '../components/Comments/CommentList';
 import type { Post } from '../types';
 import toast from 'react-hot-toast';
 
@@ -97,14 +99,19 @@ export const PostPage = () => {
             >
               ← Назад к ленте
             </button>
-            <span className="text-gray-600">{user?.login}</span>
+            <button
+              onClick={() => navigate(`/profile/${user?.id}`)}
+              className="text-gray-600 hover:text-gray-800 font-medium"
+            >
+              👤 {user?.login}
+            </button>
           </div>
         </div>
       </nav>
 
       {/* Контент */}
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
-        <article className="bg-white rounded-lg shadow-md p-8">
+        <article className="bg-white rounded-lg shadow-md p-8 mb-8">
           {/* Заголовок */}
           <h1 className="text-4xl font-bold text-gray-800 mb-4 break-words">
             {post.title}
@@ -140,35 +147,20 @@ export const PostPage = () => {
           </div>
 
           {/* Контент поста */}
-          <div className="prose max-w-none">
+          <div className="prose max-w-none mb-8">
             <p className="text-gray-700 text-lg whitespace-pre-wrap break-words leading-relaxed">
               {post.content}
             </p>
           </div>
 
-          {/* Футер с информацией */}
-          <div className="flex items-center gap-6 mt-8 pt-6 border-t border-gray-200 text-gray-500">
-            {post.likes_count !== undefined && (
-              <span className="flex items-center gap-2">
-                ❤️ <span className="font-medium">{post.likes_count}</span> лайков
-              </span>
-            )}
-            {post.comments_count !== undefined && (
-              <span className="flex items-center gap-2">
-                💬 <span className="font-medium">{post.comments_count}</span> комментариев
-              </span>
-            )}
+          {/* Кнопки лайка и избранного */}
+          <div className="pt-6 border-t border-gray-200">
+            <PostActions postId={post.id} initialLikesCount={post.likes_count} />
           </div>
         </article>
 
-        {/* Здесь позже добавим комментарии */}
-        <div className="mt-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <p className="text-gray-500 text-center">
-              Комментарии появятся на следующем этапе 💬
-            </p>
-          </div>
-        </div>
+        {/* Комментарии */}
+        <CommentList postId={post.id} />
       </div>
     </div>
   );

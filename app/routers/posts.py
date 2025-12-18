@@ -75,17 +75,26 @@ async def create_new_post(
         "author": current_user.login
     }
 
-@router.patch("/{post_id}", response_model=Post)
+@router.patch("/{post_id}", response_model=dict)
 async def update_existing_post(
     post_id: int,
     post_update: PostUpdate,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_active_user)  # ЗАЩИЩЕН
 ):
-    updated_post = await update_post(db, post_id, post_update, current_user)
+    updated_post = await update_post(db, post_id, post_update, current_user.id)
     if not updated_post:
         raise HTTPException(status_code=404, detail="Post not found")
-    return updated_post
+    
+    # ✅ ПРЕОБРАЗУЕМ в словарь с author как строкой
+    return {
+        "id": updated_post.id,
+        "title": updated_post.title,
+        "content": updated_post.content,
+        "author": updated_post.author.login,  # ← строка вместо User!
+        "created_at": updated_post.created_at,
+        "updated_at": updated_post.updated_at
+    }
 
 @router.delete("/{post_id}")
 async def delete_post_endpoint(

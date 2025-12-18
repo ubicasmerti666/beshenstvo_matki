@@ -9,7 +9,7 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.post("/post/{post_id}")
+@router.post("/posts/{post_id}/like")
 async def like_post(
     post_id: int,
     db: Session = Depends(get_db),

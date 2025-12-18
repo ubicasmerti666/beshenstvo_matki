@@ -47,6 +47,15 @@ export const postSchema = z.object({
       .min(10, 'Содержимое должно быть не менее 10 символов')
       .max(10000, 'Содержимое должно быть не более 10000 символов'),
   });
+
+export const commentSchema = z.object({
+    content: z
+      .string()
+      .min(1, 'Комментарий не может быть пустым')
+      .max(1000, 'Комментарий должен быть не более 1000 символов'),
+  });
+  
+export type CommentFormData = z.infer<typeof commentSchema>;
   
 export type PostFormData = z.infer<typeof postSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;

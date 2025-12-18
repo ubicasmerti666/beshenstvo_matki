@@ -1,14 +1,13 @@
 import { api } from './api';
-import type { Post, CreatePostData, UpdatePostData, PaginatedResponse } from '../types';
+import type { Post, CreatePostData, UpdatePostData, PaginatedResponse, SearchParams } from '../types';
 
 export const postService = {
   // Получить все посты с пагинацией
-  async getPosts(page: number = 1, size: number = 10): Promise<Post[]> { // ✅ Возвращаем Post[]
-    const response = await api.get('/posts', {
+  async getPosts(page: number = 1, size: number = 10): Promise<PaginatedResponse<Post>> {
+    const response = await api.get<PaginatedResponse<Post>>('/posts', {
       params: { page, size },
     });
-    // Твой бэкенд возвращает просто массив
-    return Array.isArray(response.data) ? response.data : [];
+    return response.data;
   },
 
   // Получить пост по ID
@@ -41,4 +40,16 @@ export const postService = {
     });
     return response.data;
   },
-};  
+
+  // Поиск постов по заголовку и содержимому
+  async searchPosts(params: SearchParams): Promise<PaginatedResponse<Post>> {
+    const response = await api.get<PaginatedResponse<Post>>('/posts/search', {
+      params: {
+        q: params.query,
+        page: params.page || 1,
+        size: params.size || 10,
+      },
+    });
+    return response.data;
+  },
+};

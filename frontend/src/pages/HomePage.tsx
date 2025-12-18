@@ -16,14 +16,23 @@ export const HomePage = () => {
           </h1>
           <div className="flex items-center gap-4">
             <button
+              onClick={() => navigate('/favorites')}
+              className="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-md hover:bg-yellow-200 transition-colors"
+            >
+              ⭐ Избранное
+            </button>
+            <button
               onClick={() => navigate('/posts/new')}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
             >
               + Создать пост
             </button>
-            <span className="text-gray-600">
-              {user?.login}
-            </span>
+            <button
+              onClick={() => navigate(`/profile/${user?.id}`)}
+              className="text-gray-600 hover:text-gray-800 font-medium transition-colors"
+            >
+              👤 {user?.login}
+            </button>
             <button
               onClick={logout}
               className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
