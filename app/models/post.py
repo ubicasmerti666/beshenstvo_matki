@@ -1,10 +1,20 @@
-from pydantic import BaseModel
-from datetime import datetime
+# ИЗМЕНЕНО: Добавлены связи и поле id
+from sqlalchemy import Column, Integer, String, DateTime, func, ForeignKey
+from sqlalchemy.orm import relationship
+from app.core.database import Base
 
-class Post(BaseModel):
-    id: int
-    authorId: int
-    title: str
-    content: str
-    createdAt: datetime
-    updatedAt: datetime
+class Post(Base):
+    __tablename__ = "posts"
+    
+    id = Column(Integer, primary_key=True, index=True)  # ИЗМЕНЕНО: добавлено поле id
+    author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    title = Column(String, nullable=False)
+    content = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    # Связи
+    author = relationship("User", back_populates="posts")
+    comments = relationship("Comment", back_populates="post")
+    likes = relationship("Like", back_populates="post")
+    favorites = relationship("Favorite", back_populates="post")

@@ -1,59 +1,34 @@
 from fastapi import FastAPI
-from pydantic import EmailStr
+from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings  # ← ДОБАВЬ ЭТО!
+from app.core.database import engine, Base
+from app.models.user import User
+from app.models.post import Post
+from app.models.comment import Comment
+from app.models.like import Like
+from app.routers import auth, users, posts, comments, likes
 
-import crud
+app = FastAPI(title="Blog Platform API")
 
-app = FastAPI()
+# СОЗДАЁТ ВСЕ ТАБЛИЦЫ!
+Base.metadata.create_all(bind=engine)
 
-@app.get("/users")
-def getAllUsers():
-    return crud.get_users()
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/users/{id}")
-def getUserById(id: int):
-    return crud.get_user_byid(id)
+# Роутеры
+app.include_router(auth.router, tags=["auth"])           # ← ДОБАВЬ!
+app.include_router(users.router, tags=["users"])         # ← ДОБАВЬ!
+app.include_router(posts.router, tags=["posts"])         # ← ДОБАВЬ!
+app.include_router(comments.router, tags=["comments"])   # ← ДОБАВЬ!
+app.include_router(likes.router, tags=["likes"])  
 
-@app.post("/users")
-def createUser(email: EmailStr, login: str, password: str):
-    crud.create_user(email, login, password)
-    return "свага тут"
-
-@app.put('/users/{id}')
-def updateUser(id: int, new_data: dict):
-    if crud.update_user(id, new_data):
-        return "свага на месте"
-    else:
-        return 'свага не на месте(('
-
-@app.delete('/users/{id}')
-def deleteUser(id: int):
-    if crud.delete_user(id):
-        return "эщкере присутствует"
-    else:
-        return 'эщкере не присутствует(('
-
-@app.get("/posts")
-def getAllPosts():
-    return crud.get_all_posts()
-
-@app.get("/posts/{authorId}")
-def getPostById(authorId:int):
-    return crud.get_posts_by_author_id(authorId)
-
-@app.post("/posts")
-def createPost(authorId: int, Title: str, Content: str):
-    if crud.create_post(authorId, Title, Content):
-        return "бомба"
-    else:
-        return "не бомба"
-
-@app.put("/posts/{id}")
-def updatePost(id: int, data: dict):
-    crud.update_post(id, data)
-
-@app.delete("/posts/{id}")
-def delPost(id: int):
-    if crud.delete_post(id):
-        return "пост уничтожен"
-    else:
-        return "друг не найден"
+@app.get("/")
+def read_root():
+    return {"message": "Blog Platform API is running!"}

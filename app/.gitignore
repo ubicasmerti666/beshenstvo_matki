@@ -1,0 +1,44 @@
+# НОВЫЙ ФАЙЛ: Защищает секреты и мусор
+# Секреты
+.env
+*.env.local
+*.env.*.local
+
+# База данных
+*.db
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.env/
+
+# Alembic миграции (локальные)
+alembic/versions/*.py
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Тесты
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
